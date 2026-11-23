@@ -1,4 +1,5 @@
 # 資料助秘計算尺
+<img width="1440" height="900" alt="image" src="https://github.com/user-attachments/assets/c6073fcc-6a9f-47f6-883b-a6de3a380925" />
 
 <img src="assets/icon.png" width="128" align="right" alt="資料助秘計算尺圖示">
 
