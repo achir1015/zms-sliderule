@@ -740,6 +740,7 @@
   if (IOS) {
     document.documentElement.classList.add("ios-app");
     $(".brand").setAttribute("href", "#rule");
+    $(".brand small").textContent = "iPhone／iPad 版";
     $("#ver").textContent = "v" + IOS.version;
     $("#upd").onclick = () => { location.href = INSTALL; };
     $("#chk").classList.remove("hidden");

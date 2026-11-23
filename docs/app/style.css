@@ -128,12 +128,12 @@ footer { text-align: center; color: var(--muted); font-size: 12.5px; padding: 10
 svg text { font-family: inherit; }
 @media (max-width: 760px) {
   body { font-size: 14px; }
-  .top { gap: 8px; padding: 6px 10px; }
+  .top { gap: 8px; padding: max(6px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) 6px max(10px, env(safe-area-inset-left)); }
   .brand img { width: 32px; height: 32px; }
   nav { order: 3; flex-basis: 100%; overflow-x: auto; flex-wrap: nowrap; }
   nav a { white-space: nowrap; padding: 5px 10px; }
   .top .icon-btn { margin-left: auto; }
-  main { padding: 10px 8px 24px; }
+  main { padding: 10px max(8px, env(safe-area-inset-right)) 24px max(8px, env(safe-area-inset-left)); }
   .card { padding: 12px; border-radius: 12px; }
   .learn { flex-direction: column; }
   .learn figure { width: 100%; }
