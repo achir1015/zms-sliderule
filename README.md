@@ -21,7 +21,8 @@
 | 平台 | 檔案 |
 |---|---|
 | Windows 11 | [ZMSSlideRule-Setup-1.0.0.exe](https://github.com/achir1015/zms-sliderule/releases/latest) |
-| macOS、線上版、iPhone／iPad、Android | 陸續推出 |
+| macOS 11 以上（Intel／Apple 晶片，已公證） | [ZMSSlideRule-1.0.0-mac.dmg](https://github.com/achir1015/zms-sliderule/releases/latest) |
+| 線上版、iPhone／iPad、Android | 陸續推出 |
 
 ## 開發
 
