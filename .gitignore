@@ -27,3 +27,5 @@ web.log
 .claude/
 docs/*.png
 !docs/icon.png
+ios/web/
+ios/*.xcodeproj/

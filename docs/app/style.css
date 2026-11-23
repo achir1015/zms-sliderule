@@ -119,6 +119,11 @@ dialog::backdrop { background: rgba(15,30,60,.45); }
   cursor: pointer; }
 .pick .sel-list button { background: #FFE08A; border-color: #E0A526; }
 .pick .opts button.used { opacity: .35; }
+.upd { border: 0; background: #FFD24A; color: #3B2A00; font: inherit; font-weight: 700; padding: 6px 12px; border-radius: 999px; cursor: pointer; }
+footer .btn { padding: 2px 8px; font-size: 12.5px; }
+/* 橫放 iPhone 的瀏海與圓角：左右留安全距離 */
+.top { padding-left: max(16px, env(safe-area-inset-left)); padding-right: max(16px, env(safe-area-inset-right)); }
+main { padding-left: max(14px, env(safe-area-inset-left)); padding-right: max(14px, env(safe-area-inset-right)); }
 footer { text-align: center; color: var(--muted); font-size: 12.5px; padding: 10px 14px 24px; padding-bottom: max(24px, env(safe-area-inset-bottom)); }
 svg text { font-family: inherit; }
 @media (max-width: 760px) {

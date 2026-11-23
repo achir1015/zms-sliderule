@@ -714,6 +714,38 @@
   $("#mute").textContent = Voice.on ? "🔊" : "🔇";
   $("#ver").textContent = "v" + (DATA.version || "");
   Voice.init();
+
+  // ================================================================== iPhone／iPad App
+  const IOS = window.ZMSIOS;
+  const INSTALL = "https://achir1015.github.io/zms-sliderule/ios/";
+  const newer = (a, b) => {                 // a 比 b 新？
+    const p = (s) => String(s).replace(/^v/, "").split(".").map((x) => parseInt(x, 10) || 0);
+    const x = p(a), y = p(b);
+    for (let i = 0; i < 3; i++) if ((x[i] || 0) !== (y[i] || 0)) return (x[i] || 0) > (y[i] || 0);
+    return false;
+  };
+  async function checkUpdate(manual) {
+    try {
+      const r = await fetch("https://api.github.com/repos/achir1015/zms-sliderule/releases/latest", { cache: "no-store" });
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      const j = await r.json();
+      const has = (j.assets || []).some((a) => a.name === "ZMSSlideRule-ios.ipa");
+      if (has && newer(j.tag_name, IOS.version)) {
+        $("#upd").textContent = "⬆ 有新版 " + j.tag_name + "，按這裡更新";
+        $("#upd").classList.remove("hidden");
+        if (manual && confirm("有新版 " + j.tag_name + "（目前 v" + IOS.version + "）。\n要開啟安裝頁更新嗎？練習成績與自訂尺型都會保留。")) location.href = INSTALL;
+      } else if (manual) toast("已經是最新版 v" + IOS.version);
+    } catch (e) { if (manual) toast("檢查更新需要網路"); }
+  }
+  if (IOS) {
+    document.documentElement.classList.add("ios-app");
+    $(".brand").setAttribute("href", "#rule");
+    $("#ver").textContent = "v" + IOS.version;
+    $("#upd").onclick = () => { location.href = INSTALL; };
+    $("#chk").classList.remove("hidden");
+    $("#chk").onclick = () => checkUpdate(true);
+    setTimeout(() => checkUpdate(false), 1500);
+  }
   route();
   if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("../sw.js").catch(() => {});
 })();
