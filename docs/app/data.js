@@ -1,6 +1,6 @@
 /* 由 tools/make_pages.py 產生，請勿手動修改 */
 window.SR_DATA = {
- "version": "1.0.0",
+ "version": "1.0.1",
  "voice": {
   "乘法 2 乘 3.5。先把游標的紅色髮線移到下面 D 刻度的 2。": "c68593005189b98ea167.mp3",
   "拉動滑尺，讓滑尺上 C 刻度的 1 對準髮線。對數相加就是相乘。": "4b3f5faefc0fc43d367c.mp3",

@@ -1,7 +1,7 @@
 ﻿; 資料助秘計算尺 — Windows 安裝程式（Inno Setup 6）
 ; 建置：python tools\build_windows.py（會先打包程式再呼叫 ISCC）
 #ifndef AppVer
-  #define AppVer "1.0.0"
+  #define AppVer "1.0.1"
 #endif
 #define AppName "資料助秘計算尺"
 #define AppExe "ZMSSlideRule.exe"
