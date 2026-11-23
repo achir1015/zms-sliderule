@@ -6,6 +6,14 @@
 import os
 import sys
 
+# macOS 的 Python 沒有系統根憑證：HTTPS（版本更新、自然語音）改用 certifi 附的憑證
+if not os.environ.get("SSL_CERT_FILE"):
+    try:
+        import certifi
+        os.environ["SSL_CERT_FILE"] = certifi.where()
+    except Exception:
+        pass
+
 import flet as ft  # noqa: E402
 
 from sr.settings import resource_dir  # noqa: E402
