@@ -1,6 +1,6 @@
 /* 離線快取：程式檔先用網路（拿到最新版），沒網路才用快取；圖片與語音先用快取。
  * 改了 docs/ 的程式就把 CACHE 的版本號加 1。 */
-const CACHE = "sliderule-v2";
+const CACHE = "sliderule-v3";
 const CORE = ["./", "./index.html", "./app/", "./app/index.html", "./app/style.css", "./app/rule.js", "./app/demo.js",
   "./app/data.js", "./app/app.js", "./manifest.webmanifest", "./img/icon-192.png", "./img/favicon-64.png"];
 

@@ -24,7 +24,7 @@
 | macOS 11 以上（Intel／Apple 晶片，已公證） | [ZMSSlideRule-1.0.0-mac.dmg](https://github.com/achir1015/zms-sliderule/releases/latest) |
 | 線上版（電腦、手機、平板的瀏覽器） | https://achir1015.github.io/zms-sliderule/ |
 | iPhone／iPad（iOS 17 以上） | [線上安裝頁](https://achir1015.github.io/zms-sliderule/ios/)（用 Safari 開；限登記過的裝置） |
-| Android | 陸續推出 |
+| Android 8 以上 | [ZMSSlideRule-1.0.0-android.apk](https://github.com/achir1015/zms-sliderule/releases/latest)（下載後點開安裝；App 內可檢查更新） |
 
 線上版不需要登入，也不連資料庫：計算尺、語音示範、讀尺練習、刻度一覽、計算尺知識、語音教學都能用，
 自訂尺型與練習成績存在這台裝置的瀏覽器裡；要多人帳號、全班成績統計請用電腦版。

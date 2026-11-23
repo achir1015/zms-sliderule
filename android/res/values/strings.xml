@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">資料助秘計算尺</string>
+    <style name="AppTheme" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:colorPrimary">#1E4D8C</item>
+        <item name="android:colorPrimaryDark">#0F3C6E</item>
+        <item name="android:colorAccent">#E0A526</item>
+        <item name="android:statusBarColor">#0F3C6E</item>
+        <item name="android:navigationBarColor">#EEF2F7</item>
+        <item name="android:windowBackground">@android:color/white</item>
+    </style>
+</resources>

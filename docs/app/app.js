@@ -58,10 +58,14 @@
         if (window.speechSynthesis) { const u = new SpeechSynthesisUtterance(""); speechSynthesis.speak(u); }
       } catch (e) { /* 忽略 */ }
     },
+    seq: 0,
+    waits: {},
     stop() {
       Voice.token++;
       try { Voice.audio.pause(); } catch (e) { /* 忽略 */ }
       if (window.speechSynthesis) speechSynthesis.cancel();
+      if (window.ZMSAndroid) { try { window.ZMSAndroid.ttsStop(); } catch (e) { /* 忽略 */ } }
+      for (const k of Object.keys(Voice.waits)) Voice.waits[k]();
     },
     estimate(text) { return Math.max(2000, text.length / 4.6 * 1000); },
     /** 講一句話，講完（或估計時間到）才 resolve；mp3 有預錄就用自然語音，否則用瀏覽器語音。 */
@@ -85,6 +89,17 @@
       });
     },
     tts(text) {
+      const A = window.ZMSAndroid;
+      if (A && A.ttsAvailable && A.ttsAvailable()) {      // Android 的 WebView 沒有網頁語音 → 手機的文字轉語音
+        return new Promise((resolve) => {
+          const id = "t" + (++Voice.seq);
+          let done = false;
+          const fin = () => { if (!done) { done = true; delete Voice.waits[id]; resolve(); } };
+          Voice.waits[id] = fin;
+          A.ttsSpeak(text, 1.05, id);
+          setTimeout(fin, Voice.estimate(text) * 1.6 + 3000);
+        });
+      }
       return new Promise((resolve) => {
         if (!window.speechSynthesis) { sleep(Voice.estimate(text)).then(resolve); return; }
         const u = new SpeechSynthesisUtterance(text);
@@ -647,7 +662,7 @@
   // ================================================================== 計算尺知識
   $("#learnList").append(...DATA.learn.map((sec, i) => h("div", { class: "card" },
     h("h3", {}, h("span", { class: "num" }, i + 1), sec.title,
-      h("button", { class: "icon-btn", style: "margin-left:auto", title: "朗讀這一段", onclick: () => { Voice.unlock(); Voice.tts(sec.title + "。" + sec.paras.join("")); } }, "🔈")),
+      h("button", { class: "icon-btn", style: "margin-left:auto", title: "朗讀這一段", onclick: () => { Voice.unlock(); Voice.stop(); Voice.tts(sec.title + "。" + sec.paras.join("")); } }, "🔈")),
     h("div", { class: "learn" }, h("div", { class: "txt" }, ...sec.paras.map((p) => h("p", {}, p))),
       h("figure", {}, h("img", { src: "../img/learn/" + sec.img, alt: sec.cap, loading: "lazy" }), h("figcaption", {}, sec.cap))))),
     h("p", { class: "muted small" }, DATA.learn_source || ""));
@@ -746,6 +761,53 @@
     $("#chk").classList.remove("hidden");
     $("#chk").onclick = () => checkUpdate(true);
     setTimeout(() => checkUpdate(false), 1500);
+  }
+
+  // ================================================================== Android App
+  const AND = window.ZMSAndroid;
+  window.__zmsTtsDone = (id) => { const f = Voice.waits[id]; if (f) f(); };
+  // 返回鍵：不在計算尺分頁 → 回到計算尺（回傳 true 表示已處理）
+  window.__zmsBack = () => {
+    const dlg = $("#pickDlg");
+    if (dlg.open) { dlg.close("cancel"); return true; }
+    if (!location.hash.startsWith("#rule") && location.hash) { location.hash = "#rule"; return true; }
+    stopDemo();
+    return false;
+  };
+  let andUpd = null;
+  function andCheck(manual) {
+    let r;
+    try { r = JSON.parse(AND.checkUpdate()); } catch (e) { r = { status: "error" }; }
+    if (r.status !== "ok") { if (manual) toast("檢查更新需要網路"); return; }
+    if (r.url && newer(r.latest, r.current)) {
+      andUpd = r;
+      $("#upd").textContent = "⬆ 有新版 v" + r.latest + "，按這裡更新";
+      $("#upd").classList.remove("hidden");
+      if (manual) andInstall();
+    } else if (manual) toast("已經是最新版 v" + r.current);
+  }
+  function andInstall() {
+    if (!andUpd || !confirm("下載並安裝新版 v" + andUpd.latest + "（目前 v" + andUpd.current + "）？\n練習成績與自訂尺型都會保留。")) return;
+    AND.installUpdate(andUpd.url, andUpd.latest);
+    const btn = $("#upd");
+    const tm = setInterval(() => {
+      let st; try { st = JSON.parse(AND.updateStatus()); } catch (e) { return; }
+      if (st.state === "downloading") btn.textContent = "⬇ 下載中 " + st.pct + "%";
+      else if (st.state === "permission") { clearInterval(tm); btn.textContent = "⬆ 允許安裝後再按一次"; toast("請允許「資料助秘計算尺」安裝應用程式，再按一次更新"); }
+      else if (st.state === "launching") { clearInterval(tm); btn.textContent = "⬆ 請在安裝畫面按「更新」"; }
+      else if (st.state === "error") { clearInterval(tm); btn.textContent = "⬆ 下載失敗，按這裡重試"; }
+    }, 500);
+  }
+  if (AND) {
+    document.documentElement.classList.add("android-app");
+    let info = {}; try { info = JSON.parse(AND.appInfo()); } catch (e) { /* 忽略 */ }
+    $(".brand").setAttribute("href", "#rule");
+    $(".brand small").textContent = "Android 版";
+    $("#ver").textContent = "v" + (info.version || DATA.version || "");
+    $("#upd").onclick = () => andInstall();
+    $("#chk").classList.remove("hidden");
+    $("#chk").onclick = () => setTimeout(() => andCheck(true), 10);
+    setTimeout(() => andCheck(false), 1500);
   }
   route();
   if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("../sw.js").catch(() => {});

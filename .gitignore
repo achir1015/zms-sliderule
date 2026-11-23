@@ -6,7 +6,10 @@
 .pytest_cache/
 .venv/
 __pycache__/
-android/
+android/*.jks
+android/build/
+android/local.properties
+android/signing.properties
 build-mac/
 build-win.log
 build/
