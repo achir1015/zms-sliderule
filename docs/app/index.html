@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>資料助秘計算尺｜線上版</title>
+<meta name="description" content="會動的虛擬計算尺：拖曳滑尺與游標、無限放大、刻度自動環繞；輸入算式，小柯用語音一步一步示範。">
+<meta name="theme-color" content="#1E4D8C">
+<link rel="icon" type="image/png" href="../img/favicon-64.png">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon.png">
+<link rel="manifest" href="../manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="計算尺">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="../" title="回介紹頁"><img src="../img/icon-192.png" alt=""><span><b>資料助秘計算尺</b><small>線上版</small></span></a>
+  <nav id="tabs">
+    <a href="#rule" data-tab="rule">計算尺</a>
+    <a href="#drill" data-tab="drill">讀尺練習</a>
+    <a href="#scales" data-tab="scales">刻度一覽</a>
+    <a href="#learn" data-tab="learn">計算尺知識</a>
+    <a href="#help" data-tab="help">語音教學</a>
+  </nav>
+  <button id="mute" class="icon-btn" title="語音開／關" aria-label="語音開關">🔊</button>
+</header>
+
+<main>
+  <!-- ======================================================= 計算尺 -->
+  <section id="tab-rule" class="tab">
+    <div class="card">
+      <div class="tools">
+        <label class="sel">尺型 <select id="layout"></select></label>
+        <button class="btn outline" id="custom">⚙ 自訂刻度</button>
+        <button class="icon-btn" id="zoomOut" title="縮小">－</button>
+        <button class="icon-btn" id="zoomIn" title="放大（也可以用滑鼠滾輪或兩指縮放）">＋</button>
+        <button class="btn ghost" id="reset">↺ 重設</button>
+        <label class="sw"><input type="checkbox" id="fine"> 精細移動（1/10）</label>
+        <span class="muted" id="zoomText"></span>
+      </div>
+      <div id="rule1" class="rulebox"></div>
+      <p class="muted small">拖曳定尺＝整把尺移動　拖曳滑尺＝只動滑尺　拖曳紅色髮線或上下把手＝移動游標　滾輪／兩指＝放大縮小（越放大越精確）</p>
+    </div>
+    <div class="card">
+      <h3><span class="tile teal">📏</span>游標讀數 <small class="muted">（對數刻度只顯示有效數字，小數點位置要自己判斷，和真的計算尺一樣）</small></h3>
+      <div id="read1" class="chips"></div>
+    </div>
+    <div class="card">
+      <h3><span class="tile rose">🗣</span>計算示範：輸入算式，小柯一步一步移動計算尺給你看</h3>
+      <form id="demoForm" class="row">
+        <input id="expr" placeholder="要算什麼？例：2×3.5、7÷2、√2、sin 30、2^1.5" autocomplete="off" inputmode="text">
+        <button class="btn" type="submit">▶ 語音示範</button>
+        <button class="btn outline" type="button" id="stop">■ 停止</button>
+      </form>
+      <div id="presets" class="presets"></div>
+      <ol id="steps" class="steps"></ol>
+      <div id="answer" class="answer"></div>
+      <div id="recent" class="recent"></div>
+    </div>
+  </section>
+
+  <!-- ======================================================= 讀尺練習 -->
+  <section id="tab-drill" class="tab">
+    <div class="card" id="drillSetup">
+      <h3><span class="tile teal">✍</span>讀尺練習</h3>
+      <p class="muted">依題型隨機出題，自己在計算尺上算出答案後輸入；誤差在容許範圍內算答對。按「看示範」小柯會帶你做一次，但該題不計分。成績存在這台裝置的瀏覽器裡。</p>
+      <div class="row wrap">
+        <label class="sel">題型 <select id="dKind"></select></label>
+        <label class="sel">每回 <input id="dSize" type="number" min="3" max="30" value="10"> 題</label>
+        <label class="sel">容許誤差 <input id="dTol" type="number" min="0.1" max="10" step="0.1" value="1"> %</label>
+        <button class="btn" id="dStart">開始練習</button>
+      </div>
+    </div>
+    <div class="card hidden" id="drillQ">
+      <div class="qhead"><span id="qNo" class="badge"></span><span id="qExpr" class="qexpr"></span><span class="muted">＝？</span></div>
+      <div id="rule2" class="rulebox"></div>
+      <div id="read2" class="chips"></div>
+      <form id="qForm" class="row wrap">
+        <input id="qAns" inputmode="decimal" placeholder="輸入讀到的答案" autocomplete="off">
+        <button class="btn" type="submit">確定</button>
+        <button class="btn outline" type="button" id="qHint">🗣 看示範（不計分）</button>
+        <button class="btn ghost" type="button" id="qQuit">結束練習</button>
+      </form>
+      <div id="qMsg" class="msg"></div>
+      <ol id="qSteps" class="steps"></ol>
+    </div>
+    <div class="card hidden" id="drillDone"></div>
+    <div class="card">
+      <h3><span class="tile violet">📈</span>我的成績與成長</h3>
+      <div id="growth"></div>
+    </div>
+  </section>
+
+  <!-- ======================================================= 刻度一覽 -->
+  <section id="tab-scales" class="tab">
+    <div class="card">
+      <h3><span class="tile blue">☰</span>刻度一覽（25 種）</h3>
+      <div class="tablewrap"><table id="scaleTable"></table></div>
+    </div>
+    <div class="card">
+      <h3><span class="tile amber">▤</span>尺型</h3>
+      <div id="layoutList" class="grid"></div>
+    </div>
+  </section>
+
+  <!-- ======================================================= 計算尺知識 -->
+  <section id="tab-learn" class="tab"><div id="learnList"></div></section>
+
+  <!-- ======================================================= 語音教學 -->
+  <section id="tab-help" class="tab">
+    <div class="help">
+      <div class="card lessons" id="lessonList"></div>
+      <div class="card" id="lessonView"></div>
+    </div>
+  </section>
+</main>
+
+<dialog id="pickDlg">
+  <form method="dialog" class="pick">
+    <h3>自訂刻度</h3>
+    <p class="muted small">點選刻度加入，再點一次移除；點選的順序就是由上到下的順序。</p>
+    <div class="pickpart"><b>上定尺</b><div class="chips sel-list" data-part="0"></div><div class="chips opts" data-part="0"></div></div>
+    <div class="pickpart"><b>滑尺</b><div class="chips sel-list" data-part="1"></div><div class="chips opts" data-part="1"></div></div>
+    <div class="pickpart"><b>下定尺</b><div class="chips sel-list" data-part="2"></div><div class="chips opts" data-part="2"></div></div>
+    <div class="row wrap">
+      <input id="pickName" placeholder="尺型名稱（填了就存成我的尺型）">
+      <button class="btn" value="ok">套用</button>
+      <button class="btn ghost" value="cancel">取消</button>
+    </div>
+  </form>
+</dialog>
+
+<div id="toast" class="toast"></div>
+<footer>資料助秘計算尺 線上版 <span id="ver"></span>　｜　開發：吳玉柱 先生 與 Claude AI Opus 5.5　｜　<a href="https://github.com/achir1015/zms-sliderule">GitHub</a></footer>
+
+<script src="rule.js"></script>
+<script src="demo.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

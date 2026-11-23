@@ -22,7 +22,11 @@
 |---|---|
 | Windows 11 | [ZMSSlideRule-Setup-1.0.0.exe](https://github.com/achir1015/zms-sliderule/releases/latest) |
 | macOS 11 以上（Intel／Apple 晶片，已公證） | [ZMSSlideRule-1.0.0-mac.dmg](https://github.com/achir1015/zms-sliderule/releases/latest) |
-| 線上版、iPhone／iPad、Android | 陸續推出 |
+| 線上版（電腦、手機、平板的瀏覽器） | https://achir1015.github.io/zms-sliderule/ |
+| iPhone／iPad、Android | 陸續推出 |
+
+線上版不需要登入，也不連資料庫：計算尺、語音示範、讀尺練習、刻度一覽、計算尺知識、語音教學都能用，
+自訂尺型與練習成績存在這台裝置的瀏覽器裡；要多人帳號、全班成績統計請用電腦版。
 
 ## 開發
 
@@ -35,6 +39,9 @@ python -m venv .venv
 .venv\Scripts\python -m pytest -q
 .venv\Scripts\python tools\build_windows.py   # 建 Windows 安裝檔
 ```
+
+線上版在 `docs/`（GitHub Pages：main 分支 /docs）：`docs/app/rule.js`、`demo.js` 是引擎的 JavaScript 版本（和 Python 版輸出一致），
+`app.js` 是畫面；`.venv\Scripts\python tools\make_pages.py` 產生圖示、教學語音、常用算式的示範語音與 `docs/app/data.js`。
 
 引擎在 `sr/rule.py`（刻度、刻度線、讀數，純數學）、`sr/demo.py`（算式 → 示範步驟），
 畫面在 `sr/ui/ruleview.py`（計算尺元件）與 `sr/ui/rulescreen.py`。

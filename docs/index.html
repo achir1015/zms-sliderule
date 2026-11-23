@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>資料助秘計算尺</title>
+<meta name="description" content="會動的虛擬計算尺：拖曳滑尺與游標、無限放大、刻度自動環繞；輸入算式，小柯用語音一步一步示範。Windows、macOS、線上版。">
+<meta name="theme-color" content="#1E4D8C">
+<link rel="icon" type="image/png" href="img/favicon-64.png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta property="og:title" content="資料助秘計算尺">
+<meta property="og:description" content="會動的虛擬計算尺，語音一步一步示範計算。">
+<meta property="og:image" content="img/icon-512.png">
+<style>
+  :root { --primary: #1E4D8C; --text: #1F2937; --muted: #6B7280; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Noto Sans TC", "Microsoft JhengHei", "PingFang TC", system-ui, sans-serif; color: var(--text);
+    background: #EEF2F7; line-height: 1.7; }
+  .hero { background: linear-gradient(135deg, #0F3C6E, #0E8F78); color: #fff; padding: 48px 20px 56px; padding-top: max(48px, env(safe-area-inset-top)); }
+  .wrap { max-width: 1060px; margin: 0 auto; }
+  .hero .wrap { display: flex; gap: 32px; align-items: center; flex-wrap: wrap; }
+  .hero img { width: 150px; height: 150px; border-radius: 34px; box-shadow: 0 12px 34px rgba(0,0,0,.28); }
+  .hero h1 { margin: 0 0 6px; font-size: 38px; letter-spacing: 1px; }
+  .hero p { margin: 0 0 18px; font-size: 17px; opacity: .93; max-width: 640px; }
+  .cta { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 11px 20px; border-radius: 12px; font-weight: 700; text-decoration: none;
+    font-size: 16px; border: 0; cursor: pointer; font-family: inherit; }
+  .btn.main { background: #FFD24A; color: #3B2A00; }
+  .btn.sub { background: rgba(255,255,255,.14); color: #fff; border: 1.5px solid rgba(255,255,255,.5); }
+  section { padding: 34px 20px 10px; }
+  h2 { font-size: 24px; margin: 0 0 16px; color: var(--primary); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; }
+  .f { background: #fff; border-radius: 14px; padding: 16px 18px; box-shadow: 0 1px 3px rgba(15,40,80,.08); }
+  .f b { display: block; font-size: 16px; margin-bottom: 4px; }
+  .f .e { font-size: 26px; }
+  .f p { margin: 0; color: #4B5563; font-size: 14.5px; }
+  .lesson { display: grid; grid-template-columns: 290px 1fr; gap: 14px; }
+  .list { background: #fff; border-radius: 14px; padding: 8px; }
+  .list button { display: block; width: 100%; text-align: left; border: 0; background: none; padding: 10px 12px; border-radius: 10px;
+    font: inherit; cursor: pointer; color: var(--text); }
+  .list button.on { background: #E6EEF9; color: var(--primary); font-weight: 700; }
+  .view { background: #fff; border-radius: 14px; padding: 18px 20px; }
+  .view h3 { margin: 0 0 10px; }
+  .steps { display: grid; gap: 8px; margin: 12px 0; }
+  .st { display: flex; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 12px; border: 2px solid #DCE3EC; transition: all .2s; }
+  .st.on { border-color: #E0A526; background: #FFF8E6; box-shadow: 0 0 0 4px rgba(224,165,38,.18); }
+  .st .n { width: 26px; height: 26px; border-radius: 13px; background: #B8C2D3; color: #fff; display: flex; align-items: center;
+    justify-content: center; font-weight: 700; font-size: 13px; flex: none; }
+  .st.on .n { background: #E0A526; }
+  .vt { background: #F7F9FC; border-radius: 10px; padding: 10px 12px; color: #374151; font-size: 14.5px; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .row .btn { font-size: 15px; padding: 8px 16px; }
+  .b1 { background: var(--primary); color: #fff; }
+  .b2 { background: #fff; color: var(--primary); border: 1.5px solid #B9C8DD !important; }
+  table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 14px; overflow: hidden; }
+  th, td { padding: 11px 14px; text-align: left; border-bottom: 1px solid #E5EAF1; }
+  th { background: #F3F6FA; }
+  footer { text-align: center; color: var(--muted); font-size: 13px; padding: 30px 20px 40px; padding-bottom: max(40px, env(safe-area-inset-bottom)); }
+  @media (max-width: 720px) {
+    .hero { padding: 32px 16px 40px; }
+    .hero img { width: 110px; height: 110px; border-radius: 26px; }
+    .hero h1 { font-size: 30px; }
+    .lesson { grid-template-columns: 1fr; }
+    section { padding: 26px 14px 6px; }
+  }
+</style>
+</head>
+<body>
+<div class="hero"><div class="wrap">
+  <img src="img/icon-512.png" alt="資料助秘計算尺圖示">
+  <div>
+    <h1>資料助秘計算尺</h1>
+    <p>會動的虛擬計算尺：拖曳滑尺與游標、無限放大（越放大越精確）、刻度自動環繞像圓形計算尺；
+      輸入算式，小柯用語音一步一步在計算尺上示範給你看。</p>
+    <div class="cta">
+      <a class="btn main" href="app/">📏 開始使用線上版</a>
+      <a class="btn sub" href="#lessons">🎧 語音教學</a>
+      <a class="btn sub" href="#download">⬇ 下載電腦版</a>
+    </div>
+  </div>
+</div></div>
+
+<section><div class="wrap">
+  <h2>功能</h2>
+  <div class="grid">
+    <div class="f"><span class="e">📏</span><b>真的會動的計算尺</b><p>拖曳定尺整把移動、拖曳滑尺只動滑尺、拖曳紅色髮線移動游標；游標讀數即時顯示每個刻度。</p></div>
+    <div class="f"><span class="e">🔍</span><b>無限放大</b><p>滑鼠滾輪或兩指縮放，刻度一直細分下去，讀數位數跟著變多。</p></div>
+    <div class="f"><span class="e">♾️</span><b>自動環繞</b><p>刻度像圓形計算尺一樣首尾相接，乘法永遠不會「超出尺外」。</p></div>
+    <div class="f"><span class="e">🗣</span><b>語音計算示範</b><p>2×3.5、7÷2、√2、1.5³、∛27、1/8、sin 30、tan 60、log 2、ln 5、e^2、2^1.5……</p></div>
+    <div class="f"><span class="e">☰</span><b>25 種刻度、7 種尺型</b><p>C D CI DI CF DF CIF A B K R1 R2 L Ln S T T2 ST P LL1～LL3 LL01～LL03，也能自訂。</p></div>
+    <div class="f"><span class="e">✍</span><b>讀尺練習</b><p>乘除、根號、倒數、三角、對數指數；自動評分，畫出成長折線圖。</p></div>
+  </div>
+</div></section>
+
+<section id="lessons"><div class="wrap">
+  <h2>語音動態教學</h2>
+  <div class="lesson"><div class="list" id="list"></div><div class="view" id="view"></div></div>
+</div></section>
+
+<section id="download"><div class="wrap">
+  <h2>下載</h2>
+  <table>
+    <tr><th>平台</th><th>說明</th></tr>
+    <tr><td>🌐 線上版</td><td><a href="app/">直接在瀏覽器使用</a>（電腦、手機、平板都可以；iPhone／iPad 可以從 Safari「分享 → 加入主畫面」）</td></tr>
+    <tr><td>🪟 Windows 11</td><td><a href="https://github.com/achir1015/zms-sliderule/releases/latest">ZMSSlideRule-Setup.exe</a>：內建資料庫、使用者權限、成績統計、程式內更新</td></tr>
+    <tr><td>🍎 macOS 11 以上</td><td><a href="https://github.com/achir1015/zms-sliderule/releases/latest">ZMSSlideRule-mac.dmg</a>（Intel／Apple 晶片，已通過 Apple 公證）</td></tr>
+    <tr><td>📱 iPhone／iPad、Android</td><td>陸續推出</td></tr>
+  </table>
+  <p style="color:var(--muted);font-size:14px">線上版不需要登入，練習成績存在你這台裝置的瀏覽器裡；學校或公司要多人管理帳號、看全班成績，請使用電腦版。</p>
+</div></section>
+
+<footer>
+  資料助秘計算尺　｜　開發：吳玉柱 先生 與 Claude AI Opus 5.5　｜　<a href="https://github.com/achir1015/zms-sliderule">GitHub</a><br>
+  參考 Infinirule 的概念（程式重新撰寫）；計算尺知識整理自維基百科「計算尺」條目（CC BY-SA 4.0）。
+</footer>
+
+<script src="app/data.js"></script>
+<script>
+(function () {
+  const L = (window.SR_DATA || {}).lessons || [], audio = new Audio();
+  let cur = L[0] && L[0].key, timer = null;
+  const list = document.getElementById("list"), view = document.getElementById("view");
+  function stop() { audio.pause(); clearInterval(timer); timer = null; view.querySelectorAll(".st").forEach((e) => e.classList.remove("on")); }
+  function render() {
+    list.innerHTML = "";
+    L.forEach((l, i) => {
+      const b = document.createElement("button");
+      b.textContent = (i + 1) + "．" + l.title; if (l.key === cur) b.className = "on";
+      b.onclick = () => { stop(); cur = l.key; render(); };
+      list.append(b);
+    });
+    const l = L.find((x) => x.key === cur); if (!l) return;
+    view.innerHTML = "";
+    const h3 = document.createElement("h3"); h3.textContent = l.title; view.append(h3);
+    const row = document.createElement("div"); row.className = "row";
+    const play = document.createElement("button"); play.className = "btn b1"; play.textContent = "▶ 播放語音教學";
+    play.onclick = () => {
+      stop(); audio.src = "voice/" + l.key + ".mp3"; audio.play();
+      timer = setInterval(() => {
+        const d = audio.duration || 0, i = d ? Math.min(l.steps.length - 1, Math.floor(audio.currentTime / d * l.steps.length)) : 0;
+        view.querySelectorAll(".st").forEach((e, j) => e.classList.toggle("on", j === i));
+      }, 200);
+    };
+    const st = document.createElement("button"); st.className = "btn b2"; st.textContent = "■ 停止"; st.onclick = stop;
+    row.append(play, st);
+    if (l.demo) { const a = document.createElement("a"); a.className = "btn b2"; a.href = "app/#rule:" + encodeURIComponent(l.demo);
+      a.textContent = "📏 到計算尺看示範（" + l.demo + "）"; row.append(a); }
+    view.append(row);
+    const steps = document.createElement("div"); steps.className = "steps";
+    l.steps.forEach((s, i) => { const d = document.createElement("div"); d.className = "st";
+      d.innerHTML = '<span class="n">' + (i + 1) + "</span>"; d.append(s[2]); steps.append(d); });
+    view.append(steps);
+    const vt = document.createElement("div"); vt.className = "vt"; vt.textContent = l.voice; view.append(vt);
+  }
+  audio.onended = stop;
+  render();
+  if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});
+})();
+</script>
+</body>
+</html>

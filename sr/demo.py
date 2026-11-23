@@ -8,6 +8,7 @@ import math
 import os
 import re
 import time
+from decimal import ROUND_HALF_UP, Decimal
 
 from . import rule as R
 
@@ -31,10 +32,16 @@ def _num(s):
 
 def sig(x, n=4):
     """有效數字 n 位的文字（去掉多餘的 0）。"""
-    if x == 0 or not math.isfinite(x):
+    if x == 0:
+        return "0"
+    if not math.isfinite(x):
         return str(x)
     d = n - 1 - math.floor(lg(abs(x)))
-    s = "%.*f" % (max(0, d), round(x, d))
+    if d < 0:                         # 四捨五入到十位、百位…（不用 round 的銀行家捨入：2.5 → 3）
+        p = 10 ** -d
+        x = math.floor(abs(x) / p + 0.5) * p * (1 if x > 0 else -1)
+    # 四捨五入（和線上版 JavaScript 的 toFixed 一樣：依實際二進位值，剛好一半就進位）
+    s = str(Decimal(x).quantize(Decimal(1).scaleb(-max(0, d)), rounding=ROUND_HALF_UP))
     if "." in s:
         s = s.rstrip("0").rstrip(".")
     return s

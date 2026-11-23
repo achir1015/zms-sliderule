@@ -1,0 +1,16 @@
+{
+  "name": "資料助秘計算尺",
+  "short_name": "計算尺",
+  "description": "會動的虛擬計算尺：拖曳、無限放大、自動環繞刻度，語音一步一步示範計算。",
+  "lang": "zh-Hant-TW",
+  "start_url": "./app/",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#EEF2F7",
+  "theme_color": "#1E4D8C",
+  "icons": [
+    {"src": "img/icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "img/icon-512.png", "sizes": "512x512", "type": "image/png"},
+    {"src": "img/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}

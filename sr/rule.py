@@ -281,8 +281,9 @@ def place_labels(tks, zoom, u_left, label_px=None):
 def digits_for(scale: Scale, u: float, zoom: float):
     """依放大倍率決定讀數位數：半個像素造成的數值差。"""
     du = 0.5 / max(zoom, 1e-9)
-    x0, x1 = scale.value(u - du / 2), scale.value(u + du / 2)
-    dx = abs(x1 - x0) or 1e-15
+    # 取左右兩邊較小的差（游標剛好在刻度頭尾時，另一邊會繞到下一圈）
+    x = scale.value(u)
+    dx = min(abs(scale.value(u + du) - x), abs(x - scale.value(u - du))) / 2 or 1e-15
     return max(0, min(14, -math.floor(math.log10(dx))))
 
 
